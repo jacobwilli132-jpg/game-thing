@@ -1,118 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Game</title>
-    <style>
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #222;
-    color: #fff;
-}
+  <meta charset="UTF-8" />
+  <title>Simple Clicker Game</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111827;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-#gameArea {
-    width: 600px;
-    height: 400px;
-    background: #333;
-    margin: 20px auto;
-    position: relative;
-    border: 3px solid #555;
-    border-radius: 10px;
-}
+    h1 {
+      margin-bottom: 0.5rem;
+    }
 
-#target {
-    width: 40px;
-    height: 40px;
-    background: red;
-    border-radius: 50%;
-    position: absolute;
-    cursor: pointer;
-    display: none;
-}
+    #stats {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
 
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
-    </style>
+    #clickButton {
+      padding: 1rem 2.5rem;
+      font-size: 1.25rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #10b981;
+      color: #022c22;
+      font-weight: 700;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+      transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.2s ease;
+    }
+
+    #clickButton:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      background: #059669;
+    }
+
+    #shop {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      width: 320px;
+      max-width: 90vw;
+    }
+
+    .upgrade {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.9rem;
+      border-radius: 0.75rem;
+      background: #1f2937;
+      border: 1px solid #374151;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease;
+      font-size: 0.9rem;
+    }
+
+    .upgrade:hover {
+      background: #111827;
+      transform: translateY(-1px);
+    }
+
+    .upgrade.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .upgrade-title {
+      font-weight: 600;
+    }
+
+    .upgrade-desc {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .upgrade-cost {
+      font-weight: 600;
+      color: #fbbf24;
+      margin-left: 1rem;
+      white-space: nowrap;
+    }
+
+    #message {
+      margin-top: 1rem;
+      min-height: 1.2em;
+      font-size: 0.9rem;
+      color: #a5b4fc;
+    }
+  </style>
 </head>
 <body>
-    <h1>Click the Target!</h1>
+  <h1>Cookie Clicker-ish</h1>
+  <div id="stats">
+    <div>Cookies: <span id="cookies">0</span></div>
+    <div>Per Click: <span id="perClick">1</span></div>
+    <div>Per Second: <span id="perSecond">0</span></div>
+  </div>
 
-    <div class="game-info">
-        <p>Score: <span id="score">0</span></p>
-        <p>Time Left: <span id="time">30</span>s</p>
-        <button id="startBtn">Start Game</button>
+  <button id="clickButton">Click Me!</button>
+
+  <div id="shop">
+    <div class="upgrade" id="upgradeClick">
+      <div>
+        <div class="upgrade-title">Stronger Click</div>
+        <div class="upgrade-desc">Increase cookies per click by 1.</div>
+      </div>
+      <div class="upgrade-cost" id="upgradeClickCost">Cost: 10</div>
     </div>
 
-    <div id="gameArea">
-        <div id="target"></div>
+    <div class="upgrade" id="upgradeAuto">
+      <div>
+        <div class="upgrade-title">Auto Baker</div>
+        <div class="upgrade-desc">Gain 1 cookie per second.</div>
+      </div>
+      <div class="upgrade-cost" id="upgradeAutoCost">Cost: 25</div>
     </div>
 
-    <script>
-let score = 0;
-let timeLeft = 30;
-let timer;
-let gameRunning = false;
-
-const scoreDisplay = document.getElementById("score");
-const timeDisplay = document.getElementById("time");
-const target = document.getElementById("target");
-const startBtn = document.getElementById("startBtn");
-const gameArea = document.getElementById("gameArea");
-
-startBtn.addEventListener("click", startGame);
-target.addEventListener("click", hitTarget);
-
-function startGame() {
-    if (gameRunning) return;
-
-    gameRunning = true;
-    score = 0;
-    timeLeft = 30;
-
-    scoreDisplay.textContent = score;
-    timeDisplay.textContent = timeLeft;
-
-    target.style.display = "block";
-    moveTarget();
-
-    timer = setInterval(() => {
-        timeLeft--;
-        timeDisplay.textContent = timeLeft;
-
-        if (timeLeft <= 0) endGame();
-    }, 1000);
-}
-
-function endGame() {
-    clearInterval(timer);
-    gameRunning = false;
-    target.style.display = "none";
-    alert("Time's up! Your score: " + score);
-}
-
-function hitTarget() {
-    if (!gameRunning) return;
-
-    score++;
-    scoreDisplay.textContent = score;
-    moveTarget();
-}
-
-function moveTarget() {
-    const areaRect = gameArea.getBoundingClientRect();
-    const size = 40;
-
-    const x = Math.random() * (areaRect.width - size);
-    const y = Math.random() * (areaRect.height - size);
-
-    target.style.left = x + "px";
-    target.style.top = y + "px";
-}
-    </script>
-</body>
-</html>
+    <div class="upgrade" id="upgradeMega">
+      <div>
+        <div class="upgrade-title">Mega Oven</div>
