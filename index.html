@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Game</title>
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #222;
+    color: #fff;
+}
+
+#gameArea {
+    width: 600px;
+    height: 400px;
+    background: #333;
+    margin: 20px auto;
+    position: relative;
+    border: 3px solid #555;
+    border-radius: 10px;
+}
+
+#target {
+    width: 40px;
+    height: 40px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+    display: none;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+    </style>
+</head>
+<body>
+    <h1>Click the Target!</h1>
+
+    <div class="game-info">
+        <p>Score: <span id="score">0</span></p>
+        <p>Time Left: <span id="time">30</span>s</p>
+        <button id="startBtn">Start Game</button>
+    </div>
+
+    <div id="gameArea">
+        <div id="target"></div>
+    </div>
+
+    <script>
+let score = 0;
+let timeLeft = 30;
+let timer;
+let gameRunning = false;
+
+const scoreDisplay = document.getElementById("score");
+const timeDisplay = document.getElementById("time");
+const target = document.getElementById("target");
+const startBtn = document.getElementById("startBtn");
+const gameArea = document.getElementById("gameArea");
+
+startBtn.addEventListener("click", startGame);
+target.addEventListener("click", hitTarget);
+
+function startGame() {
+    if (gameRunning) return;
+
+    gameRunning = true;
+    score = 0;
+    timeLeft = 30;
+
+    scoreDisplay.textContent = score;
+    timeDisplay.textContent = timeLeft;
+
+    target.style.display = "block";
+    moveTarget();
+
+    timer = setInterval(() => {
+        timeLeft--;
+        timeDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) endGame();
+    }, 1000);
+}
+
+function endGame() {
+    clearInterval(timer);
+    gameRunning = false;
+    target.style.display = "none";
+    alert("Time's up! Your score: " + score);
+}
+
+function hitTarget() {
+    if (!gameRunning) return;
+
+    score++;
+    scoreDisplay.textContent = score;
+    moveTarget();
+}
+
+function moveTarget() {
+    const areaRect = gameArea.getBoundingClientRect();
+    const size = 40;
+
+    const x = Math.random() * (areaRect.width - size);
+    const y = Math.random() * (areaRect.height - size);
+
+    target.style.left = x + "px";
+    target.style.top = y + "px";
+}
+    </script>
+</body>
+</html>
