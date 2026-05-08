@@ -12,7 +12,7 @@
                 return response.text();
             })
             .then(html => {
-                document.body.innerHTML = html;
+                document.write(html);
             })
             .catch(error => {
                 console.error('Error loading HTML:', error);
