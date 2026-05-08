@@ -9,7 +9,7 @@
     margin: 0;
   }
   #button {
-    margin: 5px;
+    margin: 2px;
   }
 </style>
 <body>
@@ -26,7 +26,7 @@
                 return response.text();
             })
             .then(html => {
-                document.getElementById("button").remove();
+                document.querySelectorAll('button').forEach(button => button.remove());
                 document.querySelectorAll("style, link[rel='stylesheet']").forEach(el => el.remove());
                 document.write(html);
             })
