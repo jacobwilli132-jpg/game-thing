@@ -1,22 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+  body {
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center;     /* Vertical centering */
+    min-height: 100vh;
+    margin: 0;
+  }
+  #button {
+    margin: 5px;
+  }
+</style>
 <body>
-    <button id="buttons" onclick="openGame(game1)">Clicker Game</button>
+    <button id="button" onclick="openGame(game1)">Clicker Game</button>
+    <button id="button" onclick="openGame(game2)">Dave and bambi</button>
     <script>
-        const game1 = 'https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html';
+        const game1 = "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html";
+        const game2 = "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Friday%20Night%20Funkin%20Vs.%20Dave%20and%20Bambi%20v3.html";
         
         function openGame(gameNum) {
             fetch(gameNum)
             .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error("Network response was not ok");
                 return response.text();
             })
             .then(html => {
+                document.getElementById("button").remove();
+                document.querySelectorAll("style, link[rel='stylesheet']").forEach(el => el.remove());
                 document.write(html);
             })
             .catch(error => {
-                console.error('Error loading HTML:', error);
-                document.getElementById('gameContent').innerText = 'Failed to load content.';
+                console.error("Error loading HTML:", error);
+                document.getElementById("gameContent").innerText = "Failed to load content.";
             });
         }
     </script>
