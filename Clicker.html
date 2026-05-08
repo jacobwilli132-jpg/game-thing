@@ -1,77 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Clicker Game</title>
-    <style>
-        /* CSS: Makes the game look nice */
-        body { font-family: sans-serif; text-align: center; background-color: #f0f0f0; }
-        .game-container { margin-top: 50px; }
-        #click-button { font-size: 24px; padding: 20px 40px; cursor: pointer; border-radius: 10px; border: none; background: #ff9800; color: white; }
-        #click-button:active { transform: scale(0.95); }
-        .stats { font-size: 32px; margin: 20px; font-weight: bold; }
-        .upgrades { margin-top: 30px; }
-        button.upgrade { padding: 10px; margin: 5px; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Simple Clicker Game</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111827;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+
+    #stats {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    #clickButton {
+      padding: 1rem 2.5rem;
+      font-size: 1.25rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #10b981;
+      color: #022c22;
+      font-weight: 700;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.35);
+      transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.2s ease;
+    }
+
+    #clickButton:active {
+      transform: translateY(2px) scale(0.98);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      background: #059669;
+    }
+
+    #shop {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      width: 320px;
+      max-width: 90vw;
+    }
+
+    .upgrade {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0.9rem;
+      border-radius: 0.75rem;
+      background: #1f2937;
+      border: 1px solid #374151;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.05s ease;
+      font-size: 0.9rem;
+    }
+
+    .upgrade:hover {
+      background: #111827;
+      transform: translateY(-1px);
+    }
+
+    .upgrade.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .upgrade-title {
+      font-weight: 600;
+    }
+
+    .upgrade-desc {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .upgrade-cost {
+      font-weight: 600;
+      color: #fbbf24;
+      margin-left: 1rem;
+      white-space: nowrap;
+    }
+
+    #message {
+      margin-top: 1rem;
+      min-height: 1.2em;
+      font-size: 0.9rem;
+      color: #a5b4fc;
+    }
+  </style>
 </head>
 <body>
+  <h1>Cookie Clicker-ish</h1>
+  <div id="stats">
+    <div>Cookies: <span id="cookies">0</span></div>
+    <div>Per Click: <span id="perClick">1</span></div>
+    <div>Per Second: <span id="perSecond">0</span></div>
+  </div>
 
-    <div class="game-container">
-        <h1>Cookie Clicker</h1>
-        <div class="stats">Cookies: <span id="score">0</span></div>
-        
-        <button id="click-button">Click Me!</button>
+  <button id="clickButton">Click Me!</button>
 
-        <div class="upgrades">
-            <button class="upgrade" onclick="buyAutoClicker()">Buy Auto-Clicker (Cost: <span id="auto-cost">15</span>)</button>
-            <p>Auto-Clickers: <span id="auto-count">0</span></p>
-        </div>
+  <div id="shop">
+    <div class="upgrade" id="upgradeClick">
+      <div>
+        <div class="upgrade-title">Stronger Click</div>
+        <div class="upgrade-desc">Increase cookies per click by 1.</div>
+      </div>
+      <div class="upgrade-cost" id="upgradeClickCost">Cost: 10</div>
     </div>
 
-    <script>
-        // JavaScript: The game logic
-        let score = 0;
-        let autoClickers = 0;
-        let autoClickerCost = 15;
+    <div class="upgrade" id="upgradeAuto">
+      <div>
+        <div class="upgrade-title">Auto Baker</div>
+        <div class="upgrade-desc">Gain 1 cookie per second.</div>
+      </div>
+      <div class="upgrade-cost" id="upgradeAutoCost">Cost: 25</div>
+    </div>
 
-        const scoreDisplay = document.getElementById('score');
-        const autoCostDisplay = document.getElementById('auto-cost');
-        const autoCountDisplay = document.getElementById('auto-count');
-        const clickBtn = document.getElementById('click-button');
+    <div class="upgrade" id="upgradeMega">
+      <div>
+        <div class="upgrade-title">Mega Oven</div>
+        <div class="upgrade-desc">Double your total production (click + auto).</div>
+      </div>
+      <div class="upgrade-cost" id="upgradeMegaCost">Cost: 200</div>
+    </div>
+  </div>
 
-        // Increase score on click
-        clickBtn.addEventListener('click', () => {
-            score++;
-            updateDisplay();
-        });
+  <div id="message"></div>
 
-        // Function to buy an auto-clicker
-        function buyAutoClicker() {
-            if (score >= autoClickerCost) {
-                score -= autoClickerCost;
-                autoClickers++;
-                autoClickerCost = Math.round(autoClickerCost * 1.5); // Cost increases each time
-                updateDisplay();
-            } else {
-                alert("Not enough cookies!");
-            }
+  <script>
+    let cookies = 0;
+    let perClick = 1;
+    let perSecond = 0;
+
+    let clickUpgradeCost = 10;
+    let autoUpgradeCost = 25;
+    let megaUpgradeCost = 200;
+
+    const cookiesEl = document.getElementById('cookies');
+    const perClickEl = document.getElementById('perClick');
+    const perSecondEl = document.getElementById('perSecond');
+    const messageEl = document.getElementById('message');
+
+    const clickButton = document.getElementById('clickButton');
+    const upgradeClick = document.getElementById('upgradeClick');
+    const upgradeAuto = document.getElementById('upgradeAuto');
+    const upgradeMega = document.getElementById('upgradeMega');
+
+    const upgradeClickCostEl = document.getElementById('upgradeClickCost');
+    const upgradeAutoCostEl = document.getElementById('upgradeAutoCost');
+    const upgradeMegaCostEl = document.getElementById('upgradeMegaCost');
+
+    function updateUI() {
+      cookiesEl.textContent = Math.floor(cookies);
+      perClickEl.textContent = perClick;
+      perSecondEl.textContent = perSecond;
+
+      // Enable/disable upgrades based on affordability
+      toggleUpgrade(upgradeClick, cookies >= clickUpgradeCost);
+      toggleUpgrade(upgradeAuto, cookies >= autoUpgradeCost);
+      toggleUpgrade(upgradeMega, cookies >= megaUpgradeCost);
+    }
+
+    function toggleUpgrade(element, canAfford) {
+      if (canAfford) {
+        element.classList.remove('disabled');
+      } else {
+        element.classList.add('disabled');
+      }
+    }
+
+    function showMessage(text) {
+      messageEl.textContent = text;
+      if (!text) return;
+      setTimeout(() => {
+        if (messageEl.textContent === text) {
+          messageEl.textContent = '';
         }
+      }, 2000);
+    }
 
-        // Update the numbers on the screen
-        function updateDisplay() {
-            scoreDisplay.innerText = score;
-            autoCostDisplay.innerText = autoClickerCost;
-            autoCountDisplay.innerText = autoClickers;
-        }
+    clickButton.addEventListener('click', () => {
+      cookies += perClick;
+      updateUI();
+    });
 
-        // Run auto-clickers every second
-        setInterval(() => {
-            if (autoClickers > 0) {
-                score += autoClickers;
-                updateDisplay();
-            }
-        }, 1000);
-    </script>
+    upgradeClick.addEventListener('click', () => {
+      if (cookies < clickUpgradeCost) {
+        showMessage("Not enough cookies for Stronger Click.");
+        return;
+      }
+      cookies -= clickUpgradeCost;
+      perClick += 1;
+      clickUpgradeCost = Math.floor(clickUpgradeCost * 1.7);
+      upgradeClickCostEl.textContent = "Cost: " + clickUpgradeCost;
+      showMessage("Your clicks got stronger!");
+      updateUI();
+    });
+
+    upgradeAuto.addEventListener('click', () => {
+      if (cookies < autoUpgradeCost) {
+        showMessage("Not enough cookies for Auto Baker.");
+        return;
+      }
+      cookies -= autoUpgradeCost;
+      perSecond += 1;
+      autoUpgradeCost = Math.floor(autoUpgradeCost * 1.8);
+      upgradeAutoCostEl.textContent = "Cost: " + autoUpgradeCost;
+      showMessage("You hired an Auto Baker!");
+      updateUI();
+    });
+
+    upgradeMega.addEventListener('click', () => {
+      if (cookies < megaUpgradeCost) {
+        showMessage("Not enough cookies for Mega Oven.");
+        return;
+      }
+      cookies -= megaUpgradeCost;
+      perClick = Math.max(1, Math.floor(perClick * 2));
+      perSecond = Math.floor(perSecond * 2);
+      megaUpgradeCost = Math.floor(megaUpgradeCost * 2.5);
+      upgradeMegaCostEl.textContent = "Cost: " + megaUpgradeCost;
+      showMessage("Mega Oven doubles your production!");
+      updateUI();
+    });
+
+    // Passive income loop
+    setInterval(() => {
+      if (perSecond > 0) {
+        cookies += perSecond / 10; // smooth gain: 10 ticks per second
+        updateUI();
+      }
+    }, 100);
+
+    // Initial UI
+    updateUI();
+  </script>
 </body>
 </html>
