@@ -2,11 +2,8 @@
 <html lang="en">
 <body>
     <button id="buttons" onclick="openGame(game1)">Clicker Game</button>
-    <div id="gameContent">Loading content...</div>
-
     <script>
         const game1 = 'https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html';
-        const game2 = 'https://chaos-games.w3spaces.com/cool_tests/clicker.html';
         
         function openGame(gameNum) {
             fetch(gameNum)
@@ -15,8 +12,7 @@
                 return response.text();
             })
             .then(html => {
-                document.getElementById('buttons').remove();
-                document.getElementById('gameContent').innerHTML = html;
+                document.body.innerHTML = html;
             })
             .catch(error => {
                 console.error('Error loading HTML:', error);
