@@ -8,19 +8,35 @@
     min-height: 100vh;
     margin: 0;
   }
-  #button {
+  button {
     margin: 2px;
   }
 </style>
 <body>
-    <button id="button" onclick="openGame(game1)">Clicker Game</button>
-    <button id="button" onclick="openGame(game2)">Dave and bambi</button>
     <script>
-        const game1 = "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html";
-        const game2 = "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Friday%20Night%20Funkin%20Vs.%20Dave%20and%20Bambi%20v3.html";
+// 1. Define your array of objects
+const games = [
+    {
+        name: "Clicker Game",
+        link: "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html" },
+    {
+        name: "Dave and bambi",
+        link: "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Friday%20Night%20Funkin%20Vs.%20Dave%20and%20Bambi%20v3.html"
         
-        function openGame(gameNum) {
-            fetch(gameNum)
+    }
+];
+
+// 2. Iterate and create elements
+games.forEach(game => {
+    // Create the button
+    const button = document.createElement('button');
+    
+    // Set properties from the object
+    button.innerText = game.name;
+    
+    // Add the click event
+    button.addEventListener('click', () => {
+        fetch(game.link)
             .then(response => {
                 if (!response.ok) throw new Error("Network response was not ok");
                 return response.text();
@@ -34,7 +50,11 @@
                 console.error("Error loading HTML:", error);
                 document.getElementById("gameContent").innerText = "Failed to load content.";
             });
-        }
+    });
+
+    // 4. Append to the page
+    document.body.appendChild(button);
+});
     </script>
 </body>
 </html>
