@@ -1,60 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-  body {
-    display: flex;
-    justify-content: center; /* Horizontal centering */
-    align-items: center;     /* Vertical centering */
-    min-height: 100vh;
-    margin: 0;
-  }
-  button {
-    margin: 2px;
-  }
-</style>
-<body>
-    <script>
-// 1. Define your array of objects
-const games = [
-    {
-        name: "Clicker Game",
-        link: "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html" },
-    {
-        name: "Dave and bambi",
-        link: "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Friday%20Night%20Funkin%20Vs.%20Dave%20and%20Bambi%20v3.html"
-        
-    }
-];
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Loader</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
 
-// 2. Iterate and create elements
-games.forEach(game => {
-    // Create the button
-    const button = document.createElement('button');
-    
-    // Set properties from the object
-    button.innerText = game.name;
-    
-    // Add the click event
-    button.addEventListener('click', () => {
-        fetch(game.link)
+      button {
+        margin: 2px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Define array of games
+      const games = [
+        {
+          name: "Clicker Game",
+          link: "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html"
+        },
+        {
+          name: "Dave and Bambi",
+          link: "https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Friday%20Night%20Funkin%20Vs.%20Dave%20and%20Bambi%20v3.html"
+        }
+      ];
+
+      // Iterate and create button elements
+      games.forEach(game => {
+        const button = document.createElement("button");
+        button.innerText = game.name;
+
+        button.addEventListener("click", () => {
+          fetch(game.link)
             .then(response => {
-                if (!response.ok) throw new Error("Network response was not ok");
-                return response.text();
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.text();
             })
             .then(html => {
-                document.querySelectorAll('button').forEach(button => button.remove());
-                document.querySelectorAll("style, link[rel='stylesheet']").forEach(el => el.remove());
-                document.write(html);
+              document.querySelectorAll("button").forEach(btn => btn.remove());
+              document.querySelectorAll("style, link[rel='stylesheet']").forEach(el => el.remove());
+              document.write(html);
             })
             .catch(error => {
-                console.error("Error loading HTML:", error);
+              console.error("Error loading HTML:", error);
+              if (document.getElementById("gameContent")) {
                 document.getElementById("gameContent").innerText = "Failed to load content.";
+              }
             });
-    });
+        });
 
-    // 4. Append to the page
-    document.body.appendChild(button);
-});
+        document.body.appendChild(button);
+      });
     </script>
-</body>
+  </body>
 </html>
