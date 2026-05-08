@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Clicker Game</title>
+    <style>
+        /* CSS: Makes the game look nice */
+        body { font-family: sans-serif; text-align: center; background-color: #f0f0f0; }
+        .game-container { margin-top: 50px; }
+        #click-button { font-size: 24px; padding: 20px 40px; cursor: pointer; border-radius: 10px; border: none; background: #ff9800; color: white; }
+        #click-button:active { transform: scale(0.95); }
+        .stats { font-size: 32px; margin: 20px; font-weight: bold; }
+        .upgrades { margin-top: 30px; }
+        button.upgrade { padding: 10px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Cookie Clicker</h1>
+        <div class="stats">Cookies: <span id="score">0</span></div>
+        
+        <button id="click-button">Click Me!</button>
+
+        <div class="upgrades">
+            <button class="upgrade" onclick="buyAutoClicker()">Buy Auto-Clicker (Cost: <span id="auto-cost">15</span>)</button>
+            <p>Auto-Clickers: <span id="auto-count">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript: The game logic
+        let score = 0;
+        let autoClickers = 0;
+        let autoClickerCost = 15;
+
+        const scoreDisplay = document.getElementById('score');
+        const autoCostDisplay = document.getElementById('auto-cost');
+        const autoCountDisplay = document.getElementById('auto-count');
+        const clickBtn = document.getElementById('click-button');
+
+        // Increase score on click
+        clickBtn.addEventListener('click', () => {
+            score++;
+            updateDisplay();
+        });
+
+        // Function to buy an auto-clicker
+        function buyAutoClicker() {
+            if (score >= autoClickerCost) {
+                score -= autoClickerCost;
+                autoClickers++;
+                autoClickerCost = Math.round(autoClickerCost * 1.5); // Cost increases each time
+                updateDisplay();
+            } else {
+                alert("Not enough cookies!");
+            }
+        }
+
+        // Update the numbers on the screen
+        function updateDisplay() {
+            scoreDisplay.innerText = score;
+            autoCostDisplay.innerText = autoClickerCost;
+            autoCountDisplay.innerText = autoClickers;
+        }
+
+        // Run auto-clickers every second
+        setInterval(() => {
+            if (autoClickers > 0) {
+                score += autoClickers;
+                updateDisplay();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
