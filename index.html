@@ -3,7 +3,7 @@
 <body>
     <button id="buttons" onclick="openGame(game1)">Clicker Game</button>
     <button id="buttons" onclick="openGame(game2)">Clicker Game</button>
-    <div id="content">Loading content...</div>
+    <div id="gameContent">Loading content...</div>
 
     <script>
         const game1 = 'https://raw.githubusercontent.com/jacobwilli132-jpg/game-thing/refs/heads/main/Clicker.html';
@@ -17,11 +17,11 @@
             })
             .then(html => {
                 document.getElementById('buttons').remove();
-                document.getElementById('content').innerHTML = html;
+                document.getElementById('gameContent').innerHTML = html;
             })
             .catch(error => {
                 console.error('Error loading HTML:', error);
-                document.getElementById('content').innerText = 'Failed to load content.';
+                document.getElementById('gameContent').innerText = 'Failed to load content.';
             });
         }
     </script>
